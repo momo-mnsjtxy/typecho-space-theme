@@ -1,0 +1,148 @@
+name: Fuwari-Typecho CI/CD
+
+on:
+  push:
+    branches: [ main, master ]
+    paths:
+      - 'fuwari-typecho/**'
+  pull_request:
+    branches: [ main, master ]
+    paths:
+      - 'fuwari-typecho/**'
+
+jobs:
+  code-quality:
+    name: Code Quality Check
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, xml, json
+          coverage: none
+      
+      - name: Install dependencies
+        run: |
+          cd fuwari-typecho
+      - name: PHP syntax check
+        run: |
+          cd fuwari-typecho
+          echo "Running PHP syntax check..."
+          find . -name "*.php" -type f -print0 | xargs -0 -n1 php -l
+      
+      - name: PHP CodeSniffer (PHPCS)
+        run: |
+          cd fuwari-typecho
+          echo "Running PHP CodeSniffer..."
+          composer require --dev squizlabs/php_codesniffer
+          vendor/bin/phpcs --standard=PSR12 --report=full .
+      
+      - name: PHPStan static analysis
+        run: |
+          cd fuwari-typecho
+          echo "Running PHPStan..."
+          composer require --dev phpstan/phpstan
+          vendor/bin/phpstan analyse --level=5 .
+      
+      - name: Upload code quality artifacts
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: code-quality-reports
+          path: |
+            fuwari-typecho/
+          retention-days: 3
+
+  release:
+    name: Create Release
+    needs: code-quality
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Set up environment
+        run: |
+          echo "RELEASE_VERSION=v$(date +%Y%m%d).$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+          echo "RELEASE_NAME=Fuwari-Typecho-$(date +%Y%m%d)-$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+      
+      - name: Create release package
+        run: |
+          mkdir -p release
+          cd fuwari-typecho
+          # 复制必要的文件到发布包
+          cp -r . ../release/fuwari-typecho
+          cd ../release
+          
+          # 创建版本信息文件
+          echo "Version: ${{ env.RELEASE_VERSION }}" > version.txt
+          echo "Release Date: $(date)" >> version.txt
+          echo "Commit: $(git rev-parse HEAD)" >> version.txt
+          
+          # 打包
+          zip -r "${{ env.RELEASE_NAME }}.zip" fuwari-typecho/ version.txt
+          tar -czf "${{ env.RELEASE_NAME }}.tar.gz" fuwari-typecho/ version.txt
+      
+      - name: Create GitHub Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ env.RELEASE_VERSION }}
+          release_name: ${{ env.RELEASE_NAME }}
+          body: |
+            ## Release ${{ env.RELEASE_VERSION }}
+            
+            **Release Date:** $(date)
+            **Commit:** $(git rev-parse HEAD)
+            
+            ### Changes:
+            ${{ github.event.head_commit.message }}
+            
+            ### Files Included:
+            - fuwari-typecho/ (完整的Typecho主题/插件目录)
+            - version.txt (版本信息文件)
+          draft: false
+          prerelease: false
+      
+      - name: Upload Release Assets
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./release/${{ env.RELEASE_NAME }}.zip
+          asset_name: ${{ env.RELEASE_NAME }}.zip
+          asset_content_type: application/zip
+      
+      - name: Upload Tarball Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./release/${{ env.RELEASE_NAME }}.tar.gz
+          asset_name: ${{ env.RELEASE_NAME }}.tar.gz
+          asset_content_type: application/gzip
+      
+      - name: Upload version file
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./release/version.txt
+          asset_name: version.txt
+          asset_content_type: text/plain
