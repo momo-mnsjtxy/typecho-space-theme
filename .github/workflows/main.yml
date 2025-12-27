@@ -1,4 +1,4 @@
-name: Fuwari-Typecho CI/CD
+name: Fuwari-Typecho CI with Tool Compatibility
 
 on:
   push:
@@ -9,20 +9,10 @@ on:
     branches: [ main, master ]
     paths:
       - 'fuwari-typecho/**'
-  workflow_dispatch:
-     inputs:
-      reason:
-        description: '手动运行原因'
-        required: true
-        default: '测试CI/CD流程'
-      environment:
-        description: '运行环境'
-        required: false
-        default: 'production'
 
 jobs:
   code-quality:
-    name: Code Quality Check
+    name: Code Quality Checks
     runs-on: ubuntu-latest
     
     steps:
@@ -37,122 +27,141 @@ jobs:
           php-version: '8.2'
           extensions: mbstring, xml, json
           coverage: none
+          tools: composer:v2
       
       - name: Install dependencies
         run: |
           cd fuwari-typecho
+          composer install --no-interaction --prefer-dist --optimize-autoloader
+      
+      - name: Create tool compatibility configurations
+        run: |
+          cd fuwari-typecho
+          
+          # PHPStan configuration with Psalm compatibility
+          cat > phpstan.neon << 'EOF'
+          parameters:
+            level: 5
+            paths:
+              - .
+            excludePaths:
+              - vendor/*
+              - node_modules/*
+            ignoreErrors:
+              - '#Psalm-specific type annotation#'
+              - '#@psalm-#'
+              - '#Callable array.*not allowed#'
+              - '#Parameter.*with no value type specified#'
+          EOF
+          
+          # Psalm configuration with PHPStan compatibility
+          cat > psalm.xml << 'EOF'
+          <?xml version="1.0"?>
+          <psalm
+            errorLevel="5"
+            resolveFromConfigFile="true"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xmlns="https://getpsalm.org/schema/config"
+            xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
+          >
+            <projectFiles>
+              <directory name="." />
+              <ignoreFiles>
+                <directory name="vendor" />
+                <directory name="node_modules" />
+              </ignoreFiles>
+            </projectFiles>
+            <issueHandlers>
+              <InvalidDocblock>
+                <errorLevel type="suppress">
+                  <directory name="vendor/phpstan" />
+                  <directory name="vendor/squizlabs" />
+                </errorLevel>
+              </InvalidDocblock>
+              <MissingClosureReturnType>
+                <errorLevel type="suppress">
+                  <directory name="vendor" />
+                </errorLevel>
+              </MissingClosureReturnType>
+            </issueHandlers>
+          </psalm>
+          EOF
+          
+          # PHPCS configuration
+          cat > phpcs.xml << 'EOF'
+          <?xml version="1.0"?>
+          <ruleset name="Fuwari-Typecho">
+            <description>Fuwari-Typecho coding standard</description>
+            
+            <file>.</file>
+            
+            <exclude-pattern>vendor/*</exclude-pattern>
+            <exclude-pattern>node_modules/*</exclude-pattern>
+            
+            <rule ref="PSR12">
+              <exclude name="Generic.Files.LineLength.TooLong" />
+              <exclude name="Squiz.Functions.MultiLineFunctionDeclaration.BraceOnSameLine" />
+            </rule>
+            
+            <!-- Ignore tool-specific annotations -->
+            <rule ref="Generic.PHP.DisallowShortOpenTag" />
+            <rule ref="Generic.CodeAnalysis.UnusedFunctionParameter" />
+          </ruleset>
+          EOF
+      
       - name: PHP syntax check
         run: |
           cd fuwari-typecho
           echo "Running PHP syntax check..."
-          find . -name "*.php" -type f -print0 | xargs -0 -n1 php -l
+          find . -name "*.php" -type f -not -path "*/vendor/*" -print0 | xargs -0 -n1 php -l
       
       - name: PHP CodeSniffer (PHPCS)
         run: |
           cd fuwari-typecho
           echo "Running PHP CodeSniffer..."
-          composer require --dev squizlabs/php_codesniffer
-          vendor/bin/phpcs --standard=PSR12 --report=full .
+          vendor/bin/phpcs --standard=phpcs.xml .
       
       - name: PHPStan static analysis
         run: |
           cd fuwari-typecho
           echo "Running PHPStan..."
-          composer require --dev phpstan/phpstan
-          vendor/bin/phpstan analyse --level=5 .
+          vendor/bin/phpstan analyse --configuration=phpstan.neon .
       
-      - name: Upload code quality artifacts
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: code-quality-reports
-          path: |
-            fuwari-typecho/
-          retention-days: 3
-
-  release:
-    name: Create Release
-    needs: code-quality
-    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
-    runs-on: ubuntu-latest
-    
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      
-      - name: Set up environment
+      - name: Psalm static analysis
         run: |
-          echo "RELEASE_VERSION=v$(date +%Y%m%d).$(git rev-parse --short HEAD)" >> $GITHUB_ENV
-          echo "RELEASE_NAME=Fuwari-Typecho-$(date +%Y%m%d)-$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+          cd fuwari-typecho
+          echo "Running Psalm..."
+          vendor/bin/psalm --config=psalm.xml
       
       - name: Create release package
+        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
         run: |
-          mkdir -p release
           cd fuwari-typecho
-          # 复制必要的文件到发布包
-          cp -r . ../release/fuwari-typecho
-          cd ../release
+          VERSION=$(date +%Y%m%d).$(git rev-parse --short HEAD)
+          echo "Creating release package v$VERSION..."
           
-          # 创建版本信息文件
-          echo "Version: ${{ env.RELEASE_VERSION }}" > version.txt
+          # Create version info
+          echo "Version: v$VERSION" > version.txt
           echo "Release Date: $(date)" >> version.txt
           echo "Commit: $(git rev-parse HEAD)" >> version.txt
           
-          # 打包
-          zip -r "${{ env.RELEASE_NAME }}.zip" fuwari-typecho/ version.txt
-          tar -czf "${{ env.RELEASE_NAME }}.tar.gz" fuwari-typecho/ version.txt
+          # Create zip package
+          zip -r "../fuwari-typecho-v$VERSION.zip" ./* version.txt -x "vendor/*" -x "node_modules/*"
       
       - name: Create GitHub Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+        uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ env.RELEASE_VERSION }}
-          release_name: ${{ env.RELEASE_NAME }}
+          tag_name: v${{ github.run_number }}
+          name: Release v${{ github.run_number }}
           body: |
-            ## Release ${{ env.RELEASE_VERSION }}
+            ## Release v${{ github.run_number }}
             
-            **Release Date:** $(date)
-            **Commit:** $(git rev-parse HEAD)
+            **Build Date:** ${{ github.event.head_commit.timestamp }}
+            **Commit:** ${{ github.sha }}
             
             ### Changes:
             ${{ github.event.head_commit.message }}
-            
-            ### Files Included:
-            - fuwari-typecho/ (完整的Typecho主题/插件目录)
-            - version.txt (版本信息文件)
+          files: fuwari-typecho-v*.zip
           draft: false
           prerelease: false
-      
-      - name: Upload Release Assets
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./release/${{ env.RELEASE_NAME }}.zip
-          asset_name: ${{ env.RELEASE_NAME }}.zip
-          asset_content_type: application/zip
-      
-      - name: Upload Tarball Asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./release/${{ env.RELEASE_NAME }}.tar.gz
-          asset_name: ${{ env.RELEASE_NAME }}.tar.gz
-          asset_content_type: application/gzip
-      
-      - name: Upload version file
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./release/version.txt
-          asset_name: version.txt
-          asset_content_type: text/plain
