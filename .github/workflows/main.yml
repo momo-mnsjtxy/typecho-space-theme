@@ -9,6 +9,16 @@ on:
     branches: [ main, master ]
     paths:
       - 'fuwari-typecho/**'
+  workflow_dispatch:
+     inputs:
+      reason:
+        description: '手动运行原因'
+        required: true
+        default: '测试CI/CD流程'
+      environment:
+        description: '运行环境'
+        required: false
+        default: 'production'
 
 jobs:
   code-quality:
