@@ -83,3 +83,6 @@
 </div>
 
 <?php $this->need('footer.php'); ?>
+
+</body>
+</html>
