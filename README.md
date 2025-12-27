@@ -1,6 +1,7 @@
 # Fuwari Typecho 主题
 
 将现代化的 [Fuwari](https://github.com/saicaca/fuwari) Astro 主题移植到 Typecho 博客平台。
+[![Fuwari-Typecho CI/CD](https://github.com/momo-mnsjtxy/typecho-space-theme/actions/workflows/main.yml/badge.svg)](https://github.com/momo-mnsjtxy/typecho-space-theme/actions/workflows/main.yml)
 
 ## 🎨 特性
 
