@@ -198,4 +198,4 @@ MIT License
 
 ---
 
-**现在就开始使用 Fuwari Typecho 主题，打造优雅的博客！** 🚀
+**现在就开始使用 Fuwari Typecho 主题，打造优雅的博客！** 
