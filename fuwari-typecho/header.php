@@ -9,21 +9,21 @@
         'tag'       =>  _t('标签 %s 下的文章'),
         'author'    =>  _t('%s 发布的文章')
     ], '', ' - '); ?><?php $this->options->title(); ?></title>
-    
-    <meta name="description" content="<?php if($this->is('single')) { $this->excerpt(100, ''); } else { $this->options->description(); } ?>">
+
+    <meta name="description" content="<?php if ($this->is('single')) { $this->excerpt(100, ''); } else { $this->options->description(); } ?>">
     <meta name="author" content="<?php $this->author(); ?>">
-    
+
     <!-- Open Graph -->
     <meta property="og:site_name" content="<?php $this->options->title(); ?>">
     <meta property="og:url" content="<?php $this->permalink(); ?>">
     <meta property="og:title" content="<?php $this->title(); ?>">
-    <meta property="og:description" content="<?php if($this->is('single')) { $this->excerpt(100, ''); } else { $this->options->description(); } ?>">
-    <meta property="og:type" content="<?php if($this->is('post')): ?>article<?php else: ?>website<?php endif; ?>">
-    
+    <meta property="og:description" content="<?php if ($this->is('single')) { $this->excerpt(100, ''); } else { $this->options->description(); } ?>">
+    <meta property="og:type" content="<?php if ($this->is('post')): ?>article<?php else: ?>website<?php endif; ?>">
+
     <!-- Favicon -->
     <link rel="icon" href="<?php $this->options->themeUrl('assets/images/favicon/favicon-light-32.png'); ?>" sizes="32x32" media="(prefers-color-scheme: light)">
     <link rel="icon" href="<?php $this->options->themeUrl('assets/images/favicon/favicon-dark-32.png'); ?>" sizes="32x32" media="(prefers-color-scheme: dark)">
-    
+
     <!-- Theme Initialization Script -->
     <script>
     (function(){
@@ -34,7 +34,7 @@
         const BANNER_HEIGHT_EXTEND = 30;
         const PAGE_WIDTH = 75;
         const configHue = 250;
-        
+
         const theme = localStorage.getItem('theme') || DEFAULT_THEME;
         switch (theme) {
             case LIGHT_MODE:
@@ -50,32 +50,32 @@
                     document.documentElement.classList.remove('dark');
                 }
         }
-        
+
         const hue = localStorage.getItem('hue') || configHue;
         document.documentElement.style.setProperty('--hue', hue);
-        
+
         let offset = Math.floor(window.innerHeight * (BANNER_HEIGHT_EXTEND / 100));
         offset = offset - offset % 4;
         document.documentElement.style.setProperty('--banner-height-extend', `${offset}px`);
     })();
     </script>
-    
+
     <!-- Stylesheets -->
     <link rel="stylesheet" href="<?php $this->options->themeUrl('assets/Layout.DSulWsr7.css'); ?>">
     <link rel="stylesheet" href="<?php $this->options->themeUrl('assets/Layout.y4KPJ9hc.css'); ?>">
     <link rel="stylesheet" href="<?php $this->options->themeUrl('assets/_page_.DpTWXJf8.css'); ?>">
     <link rel="stylesheet" href="<?php $this->options->themeUrl('assets/_page_.ZlghMKVQ.css'); ?>">
     <link rel="stylesheet" href="<?php $this->options->themeUrl('assets/about.BtniRLn_.css'); ?>">
-    
+
     <style>
     input.svelte-1wah7ro:focus{outline:0}.search-panel.svelte-1wah7ro{max-height:calc(100vh - 100px);overflow-y:auto}#display-setting.svelte-d7tq3k input[type=range]:where(.svelte-d7tq3k){-webkit-appearance:none;height:1.5rem;background-image:var(--color-selection-bar);transition:background-image .15s ease-in-out}#display-setting.svelte-d7tq3k input[type=range]:where(.svelte-d7tq3k)::-webkit-slider-thumb{-webkit-appearance:none;height:1rem;width:.5rem;border-radius:.125rem;background:#ffffffb3;box-shadow:none}#display-setting.svelte-d7tq3k input[type=range]:where(.svelte-d7tq3k)::-webkit-slider-thumb:hover{background:#fffc}#display-setting.svelte-d7tq3k input[type=range]:where(.svelte-d7tq3k)::-webkit-slider-thumb:active{background:#fff9}#display-setting.svelte-d7tq3k input[type=range]:where(.svelte-d7tq3k)::-moz-range-thumb{-webkit-appearance:none;height:1rem;width:.5rem;border-radius:.125rem;border-width:0;background:#ffffffb3;box-shadow:none}#display-setting.svelte-d7tq3k input[type=range]:where(.svelte-d7tq3k)::-moz-range-thumb:hover{background:#fffc}#display-setting.svelte-d7tq3k input[type=range]:where(.svelte-d7tq3k)::-moz-range-thumb:active{background:#fff9}#display-setting.svelte-d7tq3k input[type=range]:where(.svelte-d7tq3k)::-ms-thumb{-webkit-appearance:none;height:1rem;width:.5rem;border-radius:.125rem;background:#ffffffb3;box-shadow:none}#display-setting.svelte-d7tq3k input[type=range]:where(.svelte-d7tq3k)::-ms-thumb:hover{background:#fffc}#display-setting.svelte-d7tq3k input[type=range]:where(.svelte-d7tq3k)::-ms-thumb:active{background:#fff9}
     </style>
-    
+
     <?php $this->header(); ?>
 </head>
-<body class="min-h-screen transition <?php if($this->is('index')): ?>lg:is-home<?php endif; ?>" data-overlayscrollbars-initialize style="--bannerOffset: 15vh;--banner-height-home: 65vh;--banner-height: 35vh;--configHue: 250;--page-width: 75rem;">
+<body class="min-h-screen transition <?php if ($this->is('index')): ?>lg:is-home<?php endif; ?>" data-overlayscrollbars-initialize style="--bannerOffset: 15vh;--banner-height-home: 65vh;--banner-height: 35vh;--configHue: 250;--page-width: 75rem;">
     <div id="config-carrier" data-hue="250"></div>
-    
+
     <div id="top-row" class="z-50 pointer-events-none relative transition-all duration-700 max-w-[var(--page-width)] px-0 md:px-4 mx-auto">
         <div id="navbar-wrapper" class="pointer-events-auto sticky top-0 transition-all">
             <div id="navbar" class="z-50 onload-animation">
@@ -92,7 +92,7 @@
                             <?php $this->options->title(); ?>
                         </div>
                     </a>
-                    
+
                     <div class="hidden md:flex">
                         <a aria-label="Home" href="<?php $this->options->siteUrl(); ?>" class="btn-plain scale-animation rounded-lg h-11 font-bold px-5 active:scale-95">
                             <div class="flex items-center">Home</div>
@@ -101,13 +101,13 @@
                             <div class="flex items-center">Archive</div>
                         </a>
                         <?php $this->widget('Widget_Contents_Page_List')->to($pages); ?>
-                        <?php while($pages->next()): ?>
+                        <?php while ($pages->next()): ?>
                         <a aria-label="<?php $pages->title(); ?>" href="<?php $pages->permalink(); ?>" class="btn-plain scale-animation rounded-lg h-11 font-bold px-5 active:scale-95">
                             <div class="flex items-center"><?php $pages->title(); ?></div>
                         </a>
                         <?php endwhile; ?>
                     </div>
-                    
+
                     <div class="flex">
                         <button aria-label="Display Settings" class="btn-plain scale-animation rounded-lg h-11 w-11 active:scale-90" id="display-settings-switch">
                             <svg width="1em" height="1em" class="text-[1.25rem]" data-icon="material-symbols:palette-outline">
@@ -117,7 +117,7 @@
                                 <use href="#ai:material-symbols:palette-outline"></use>
                             </svg>
                         </button>
-                        
+
                         <button aria-label="Dark Mode Toggle" class="btn-plain scale-animation rounded-lg h-11 w-11 active:scale-90" id="scheme-switch">
                             <svg width="1em" height="1em" class="text-[1.25rem]" data-icon="material-symbols:dark-mode">
                                 <symbol id="ai:material-symbols:dark-mode" viewBox="0 0 24 24">
@@ -126,7 +126,7 @@
                                 <use href="#ai:material-symbols:dark-mode"></use>
                             </svg>
                         </button>
-                        
+
                         <button aria-label="Menu" name="Nav Menu" class="btn-plain scale-animation rounded-lg w-11 h-11 active:scale-90 md:!hidden" id="nav-menu-switch">
                             <svg width="1em" height="1em" class="text-[1.25rem]" data-icon="material-symbols:menu-rounded">
                                 <symbol id="ai:material-symbols:menu-rounded" viewBox="0 0 24 24">
@@ -136,7 +136,7 @@
                             </svg>
                         </button>
                     </div>
-                    
+
                     <div id="nav-menu-panel" class="float-panel float-panel-closed absolute transition-all fixed right-4 px-2 py-2">
                         <a href="<?php $this->options->siteUrl(); ?>" class="group flex justify-between items-center py-2 pl-3 pr-1 rounded-lg gap-8 hover:bg-[var(--btn-plain-bg-hover)] active:bg-[var(--btn-plain-bg-active)] transition">
                             <div class="transition text-black/75 dark:text-white/75 font-bold group-hover:text-[var(--primary)] group-active:text-[var(--primary)]">Home</div>
@@ -145,13 +145,13 @@
                             <div class="transition text-black/75 dark:text-white/75 font-bold group-hover:text-[var(--primary)] group-active:text-[var(--primary)]">Archive</div>
                         </a>
                         <?php $this->widget('Widget_Contents_Page_List')->to($pages); ?>
-                        <?php while($pages->next()): ?>
+                        <?php while ($pages->next()): ?>
                         <a href="<?php $pages->permalink(); ?>" class="group flex justify-between items-center py-2 pl-3 pr-1 rounded-lg gap-8 hover:bg-[var(--btn-plain-bg-hover)] active:bg-[var(--btn-plain-bg-active)] transition">
                             <div class="transition text-black/75 dark:text-white/75 font-bold group-hover:text-[var(--primary)] group-active:text-[var(--primary)]"><?php $pages->title(); ?></div>
                         </a>
                         <?php endwhile; ?>
                     </div>
-                    
+
                     <div id="display-setting" class="float-panel float-panel-closed absolute transition-all fixed right-4 px-4 py-4 rounded-xl">
                         <div class="font-bold text-lg mb-4">Display Settings</div>
                         <div class="mb-4">
@@ -165,10 +165,10 @@
                     </div>
                 </div>
             </div>
-            
+
             <script>
             function toggleDarkMode(){
-                if(localStorage.theme==="dark"){
+                if (localStorage.theme==="dark"){
                     document.documentElement.classList.remove("dark");
                     localStorage.theme="light";
                 } else {
@@ -176,28 +176,28 @@
                     localStorage.theme="dark";
                 }
             }
-            
+
             function initNav(){
                 let schemeSwitch = document.getElementById("scheme-switch");
-                if(schemeSwitch){
+                if (schemeSwitch){
                     schemeSwitch.onclick = function(){
                         toggleDarkMode();
                     };
                 }
-                
+
                 let displaySettingsSwitch = document.getElementById("display-settings-switch");
-                if(displaySettingsSwitch){
+                if (displaySettingsSwitch){
                     displaySettingsSwitch.onclick = function(){
                         let panel = document.getElementById("display-setting");
-                        if(panel) panel.classList.toggle("float-panel-closed");
+                        if (panel) panel.classList.toggle("float-panel-closed");
                     };
                 }
-                
+
                 let navMenuSwitch = document.getElementById("nav-menu-switch");
-                if(navMenuSwitch){
+                if (navMenuSwitch){
                     navMenuSwitch.onclick = function(){
                         let panel = document.getElementById("nav-menu-panel");
-                        if(panel) panel.classList.toggle("float-panel-closed");
+                        if (panel) panel.classList.toggle("float-panel-closed");
                     };
                 }
             }
