@@ -65,6 +65,7 @@ class Init extends Widget
             'Widget_Abstract_Options'     => '\Widget\Base\Options',
             'Widget_Abstract_Users'       => '\Widget\Base\Users',
             'Widget_Metas_Category_List'  => '\Widget\Metas\Category\Rows',
+            'Widget_Metas_Tag_List'       => '\Widget\Metas\Tag\Cloud',
             'Widget_Contents_Page_List'   => '\Widget\Contents\Page\Rows',
             'Widget_Plugins_List'         => '\Widget\Plugins\Rows',
             'Widget_Themes_List'          => '\Widget\Themes\Rows',
