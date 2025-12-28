@@ -1,6 +1,10 @@
-<?php if (!defined('__TYPECHO_ROOT_DIR__')) exit; ?>
+<?php
+if (!defined('__TYPECHO_ROOT_DIR__')) {
+    exit;
+}
 
-<?php function threadedComments($comments, $options) {
+function threadedComments($comments, $options)
+{
     $commentClass = '';
     if ($comments->authorId) {
         if ($comments->authorId == $comments->ownerId) {
@@ -12,14 +16,14 @@
     $commentLevelClass = $comments->levels > 0 ? ' comment-child' : ' comment-parent';
 ?>
 
-<li id="li-<?php $comments->theId(); ?>" class="comment-body<?php 
+<li id="li-<?php $comments->theId(); ?>" class="comment-body<?php
 if ($comments->levels > 0) {
     echo ' comment-child';
     echo ' comment-level-' . $comments->levels;
 } else {
     echo ' comment-parent';
 }
-echo $commentClass; 
+echo $commentClass;
 ?>">
     <div id="<?php $comments->theId(); ?>" class="comment-content p-4 mb-4 rounded-lg bg-neutral-50 dark:bg-neutral-800">
         <div class="comment-meta flex items-center mb-3">
@@ -37,7 +41,7 @@ echo $commentClass;
             <?php $comments->content(); ?>
         </div>
     </div>
-    
+
     <?php if ($comments->children) { ?>
     <div class="comment-children ml-8">
         <?php $comments->threadedComments($options); ?>
@@ -51,7 +55,7 @@ echo $commentClass;
     <h3 class="font-bold text-2xl text-neutral-900 dark:text-neutral-100 mb-6">
         <?php $this->commentsNum(_t('暂无评论'), _t('仅有 1 条评论'), _t('已有 %d 条评论')); ?>
     </h3>
-    
+
     <?php if ($this->allow('comment')): ?>
     <div id="<?php $this->respondId(); ?>" class="respond mb-8">
         <div class="cancel-comment-reply">
@@ -59,9 +63,9 @@ echo $commentClass;
         </div>
 
         <form method="post" action="<?php $this->commentUrl() ?>" id="comment-form" role="form" class="space-y-4">
-            <?php if($this->user->hasLogin()): ?>
+            <?php if ($this->user->hasLogin()): ?>
             <p class="text-neutral-600 dark:text-neutral-300">
-                Logged in as <a href="<?php $this->options->profileUrl(); ?>" class="text-[var(--primary)] hover:underline"><?php $this->user->screenName(); ?></a>. 
+                Logged in as <a href="<?php $this->options->profileUrl(); ?>" class="text-[var(--primary)] hover:underline"><?php $this->user->screenName(); ?></a>.
                 <a href="<?php $this->options->logoutUrl(); ?>" title="Logout" class="text-[var(--primary)] hover:underline">Logout &raquo;</a>
             </p>
             <?php else: ?>
@@ -71,9 +75,9 @@ echo $commentClass;
                 <input type="url" name="url" id="url" class="px-4 py-2 rounded-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 focus:outline-none focus:border-[var(--primary)]" placeholder="Website" value="<?php $this->remember('url'); ?>" />
             </div>
             <?php endif; ?>
-            
+
             <textarea rows="5" cols="50" name="text" id="textarea" class="w-full px-4 py-2 rounded-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 focus:outline-none focus:border-[var(--primary)] resize-vertical" placeholder="Your comment here..." required><?php $this->remember('text'); ?></textarea>
-            
+
             <button type="submit" class="btn-regular px-6 py-2 rounded-lg bg-[var(--primary)] text-white hover:opacity-90 active:scale-95 transition">
                 Submit Comment
             </button>
@@ -87,11 +91,11 @@ echo $commentClass;
     <div id="comment-list" class="comment-list">
         <ol class="comment-list-ol list-none p-0">
             <?php $this->comments()->to($comments); ?>
-            <?php while($comments->next()): ?>
+            <?php while ($comments->next()): ?>
                 <?php $comments->threadedComments(); ?>
             <?php endwhile; ?>
         </ol>
-        
+
         <?php $this->commentsPageNav('&laquo; Previous', 'Next &raquo;', 1, '...', array('wrapTag' => 'div', 'wrapClass' => 'flex justify-center gap-2 mt-6', 'itemTag' => 'span', 'textTag' => 'a', 'currentClass' => 'btn-regular px-4 py-2 rounded-lg bg-[var(--primary)] text-white', 'prevClass' => 'btn-regular px-4 py-2 rounded-lg', 'nextClass' => 'btn-regular px-4 py-2 rounded-lg')); ?>
     </div>
     <?php endif; ?>

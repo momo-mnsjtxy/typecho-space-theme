@@ -1,7 +1,7 @@
 <?php
 /**
  * Fuwari Theme for Typecho
- * 
+ *
  * @package Fuwari Theme
  * @author Fuwari
  * @version 1.0.0
@@ -15,16 +15,16 @@ $this->need('header.php');
 <div class="absolute w-full z-30 pointer-events-none" style="top: 5.5rem">
     <div class="relative max-w-[var(--page-width)] mx-auto pointer-events-auto">
         <div id="main-grid" class="transition duration-700 w-full left-0 right-0 grid grid-cols-[17.5rem_auto] grid-rows-[auto_1fr_auto] lg:grid-rows-[auto] mx-auto gap-4 px-0 md:px-4">
-            
+
             <?php $this->need('sidebar.php'); ?>
-            
+
             <main id="swup-container" class="transition-swup-fade col-span-2 lg:col-span-1 overflow-hidden">
                 <div id="content-wrapper" class="onload-animation">
                     <div class="transition flex flex-col rounded-[var(--radius-large)] bg-[var(--card-bg)] py-1 md:py-0 md:bg-transparent md:gap-4 mb-4">
-                        
+
                         <?php $postIndex = 0; ?>
-                        <?php while($this->next()): ?>
-                        
+                        <?php while ($this->next()): ?>
+
                         <div class="card-base flex flex-col-reverse md:flex-col w-full rounded-[var(--radius-large)] overflow-hidden relative onload-animation" style="animation-delay: calc(var(--content-delay) + <?php echo $postIndex * 50; ?>ms);">
                             <div class="pl-6 md:pl-9 pr-6 md:pr-2 pt-6 md:pt-7 pb-6 relative w-full">
                                 <a href="<?php $this->permalink(); ?>" class="transition group w-full block font-bold mb-3 text-3xl text-90 hover:text-[var(--primary)] dark:hover:text-[var(--primary)] active:text-[var(--title-active)] dark:active:text-[var(--title-active)] before:w-1 before:h-5 before:rounded-md before:bg-[var(--primary)] before:absolute before:top-[35px] before:left-[18px] before:hidden md:before:block">
@@ -36,7 +36,7 @@ $this->need('header.php');
                                         <use href="#ai:material-symbols:chevron-right-rounded"></use>
                                     </svg>
                                 </a>
-                                
+
                                 <div class="flex flex-wrap text-neutral-500 dark:text-neutral-400 items-center gap-4 gap-x-4 gap-y-2 mb-4">
                                     <!-- Publish Date -->
                                     <div class="flex items-center">
@@ -50,9 +50,9 @@ $this->need('header.php');
                                         </div>
                                         <span class="text-50 text-sm font-medium"><?php $this->date('Y-m-d'); ?></span>
                                     </div>
-                                    
+
                                     <!-- Category -->
-                                    <?php if($this->categories): ?>
+                                    <?php if ($this->categories): ?>
                                     <div class="flex items-center">
                                         <div class="meta-icon">
                                             <svg width="1em" height="1em" class="text-xl" data-icon="material-symbols:book-2-outline-rounded">
@@ -67,9 +67,9 @@ $this->need('header.php');
                                         </div>
                                     </div>
                                     <?php endif; ?>
-                                    
+
                                     <!-- Tags -->
-                                    <?php if($this->tags): ?>
+                                    <?php if ($this->tags): ?>
                                     <div class="items-center hidden md:flex">
                                         <div class="meta-icon">
                                             <svg width="1em" height="1em" class="text-xl" data-icon="material-symbols:tag-rounded">
@@ -85,34 +85,34 @@ $this->need('header.php');
                                     </div>
                                     <?php endif; ?>
                                 </div>
-                                
+
                                 <!-- Excerpt -->
                                 <div class="transition text-75 mb-3.5 pr-4">
                                     <?php $this->excerpt(150, '...'); ?>
                                 </div>
                             </div>
-                            
+
                             <a href="<?php $this->permalink(); ?>" aria-label="<?php $this->title(); ?>" class="!hidden md:!flex btn-regular w-[3.25rem] absolute right-3 top-3 bottom-3 rounded-xl bg-[var(--enter-btn-bg)] hover:bg-[var(--enter-btn-bg-hover)] active:bg-[var(--enter-btn-bg-active)] active:scale-95">
                                 <svg width="1em" height="1em" viewBox="0 0 24 24" class="transition text-[var(--primary)] text-4xl mx-auto" data-icon="material-symbols:chevron-right-rounded">
                                     <use href="#ai:material-symbols:chevron-right-rounded"></use>
                                 </svg>
                             </a>
                         </div>
-                        
-                        <?php if(!$this->isLast()): ?>
+
+                        <?php if (!$this->isLast()): ?>
                         <div class="transition border-t-[1px] border-dashed mx-6 border-black/10 dark:border-white/[0.15] last:border-t-0 md:hidden"></div>
                         <?php endif; ?>
-                        
+
                         <?php $postIndex++; ?>
                         <?php endwhile; ?>
-                        
+
                     </div>
-                    
+
                     <!-- Pagination -->
                     <?php $this->pageNav('&laquo; Previous', 'Next &raquo;', 1, '...', array('wrapTag' => 'div', 'wrapClass' => 'flex justify-center gap-2 mt-4', 'itemTag' => 'span', 'textTag' => 'a', 'currentClass' => 'btn-regular px-4 py-2 rounded-lg bg-[var(--primary)] text-white', 'prevClass' => 'btn-regular px-4 py-2 rounded-lg', 'nextClass' => 'btn-regular px-4 py-2 rounded-lg')); ?>
                 </div>
             </main>
-            
+
         </div>
     </div>
 </div>

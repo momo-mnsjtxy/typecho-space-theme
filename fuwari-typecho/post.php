@@ -4,19 +4,19 @@
 <div class="absolute w-full z-30 pointer-events-none" style="top: 5.5rem">
     <div class="relative max-w-[var(--page-width)] mx-auto pointer-events-auto">
         <div id="main-grid" class="transition duration-700 w-full left-0 right-0 grid grid-cols-[17.5rem_auto] grid-rows-[auto_1fr_auto] lg:grid-rows-[auto] mx-auto gap-4 px-0 md:px-4">
-            
+
             <?php $this->need('sidebar.php'); ?>
-            
+
             <main id="swup-container" class="transition-swup-fade col-span-2 lg:col-span-1 overflow-hidden">
                 <div id="content-wrapper" class="onload-animation">
-                    
+
                     <article class="card-base rounded-[var(--radius-large)] overflow-hidden p-6 md:p-9">
                         <!-- Post Header -->
                         <header class="mb-8">
                             <h1 class="font-bold text-4xl md:text-5xl text-neutral-900 dark:text-neutral-100 mb-4">
                                 <?php $this->title(); ?>
                             </h1>
-                            
+
                             <div class="flex flex-wrap text-neutral-500 dark:text-neutral-400 items-center gap-4 mb-4">
                                 <!-- Publish Date -->
                                 <div class="flex items-center">
@@ -25,7 +25,7 @@
                                     </svg>
                                     <span class="text-sm"><?php $this->date('F j, Y'); ?></span>
                                 </div>
-                                
+
                                 <!-- Author -->
                                 <div class="flex items-center">
                                     <svg width="1em" height="1em" class="text-xl mr-2" data-icon="material-symbols:person-outline">
@@ -36,9 +36,9 @@
                                     </svg>
                                     <span class="text-sm"><?php $this->author(); ?></span>
                                 </div>
-                                
+
                                 <!-- Category -->
-                                <?php if($this->categories): ?>
+                                <?php if ($this->categories): ?>
                                 <div class="flex items-center">
                                     <svg width="1em" height="1em" class="text-xl mr-2" data-icon="material-symbols:book-2-outline-rounded">
                                         <use href="#ai:material-symbols:book-2-outline-rounded"></use>
@@ -47,20 +47,20 @@
                                 </div>
                                 <?php endif; ?>
                             </div>
-                            
+
                             <!-- Tags -->
-                            <?php if($this->tags): ?>
+                            <?php if ($this->tags): ?>
                             <div class="flex flex-wrap gap-2 mt-4">
                                 <?php $this->tags('<span class="btn-regular h-8 text-sm px-3 rounded-lg inline-block">', true, '</span>'); ?>
                             </div>
                             <?php endif; ?>
                         </header>
-                        
+
                         <!-- Post Content -->
                         <div class="prose dark:prose-invert max-w-none mb-8">
                             <?php $this->content(); ?>
                         </div>
-                        
+
                         <!-- Post Navigation -->
                         <nav class="flex justify-between items-center pt-6 border-t border-neutral-200 dark:border-neutral-700">
                             <div class="flex-1">
@@ -71,13 +71,13 @@
                             </div>
                         </nav>
                     </article>
-                    
+
                     <!-- Comments Section -->
                     <?php $this->need('comments.php'); ?>
-                    
+
                 </div>
             </main>
-            
+
         </div>
     </div>
 </div>
